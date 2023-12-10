@@ -1,0 +1,48 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.5
+Date: 2023-12-07
+  Features:
+    - Added GitHub repo
+---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 2023-12-03
+  Features:
+    - Localization - Added [ja] support. Thank you Cortland!
+    - Localization - Added [es-ES] support. Thank you Carlos!
+    - Localization - Wrote a script to assist in updating locale filters
+    - Krastorio2 Compatibility - updated coal-filtration change to be more straightforward
+---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2023-12-02
+  Features:
+    - Player Items Exclusion setting is now more clever, should work with more mods automagically
+    - Improved algorithm for checking if an item is excluded (indexing, rather than looping)
+    - Krastorio2 Compatibility - excluded the following: matter conversion/deconversion, water separation/combination, pollution filters and filter restoration, dirty water filtration, reactor fuels and byproducts, crushing recipes
+  Fixes:
+    - Fixed changelog indentation
+    - Fixed optional dependencies in info.json
+---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2023-12-01
+  Features:
+    - Added logic to avoid multiplying catalyst resources (should result in less recipe names needing explicit exclusion)
+    - Added logic to multiply recipe outputs which use amount_min and amount_max
+    - Freight Forwarding Compatibility - Excluded recipe loops for Battery Charging, Titansteel Heating/Cooling, Dredging
+    - Added recipe exclusion by category
+    - Updated locale for new category exclusion mod setting
+    - Intermodal Containers Compatibility - loading/unloading recipes are excluded via the "packing" category
+    - Added changelog
+  License:
+    - LICENSE file added
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2023-12-01
+  Features:
+    - Problematic item type handling updated for more robust solution
+  Fixes:
+    - Fixed error message for multi-result recipes which do not define "amount"
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2023-12-01
+  Features:
+    - Initial release
