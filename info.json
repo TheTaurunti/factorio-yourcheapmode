@@ -1,11 +1,11 @@
 {
-	"name": "YourCheapMode",
-	"version": "1.0.5",
-	"title": "Your Cheap Mode",
-	"author": "Taurunti",
-	"contact": "thetaurunti@gmail.com",
+  "name": "YourCheapMode",
+  "version": "1.0.5",
+  "title": "Your Cheap Mode",
+  "author": "Taurunti",
+  "contact": "thetaurunti@gmail.com",
   "homepage": "https://github.com/TheTaurunti/factorio-cheapmode",
-	"factorio_version": "1.1",
-	"dependencies": ["base >= 1.1", "? IntermodalContainers >= 2.0.7", "? FreightForwarding >= 1.8.2", "? Krastorio2 >= 1.3.23"],
-	"description": "Reduces the cost of individual items by multiplying the output and time values of most recipes. Settings are provided to prevent multiplication of user-specified recipes, and to adjust the output and time multipliers."
+  "factorio_version": "1.1",
+  "dependencies": ["base >= 1.1", "? IntermodalContainers >= 2.0.7", "? FreightForwarding >= 1.8.2", "? Krastorio2 >= 1.3.23"],
+  "description": "Reduces the cost of individual items by multiplying the output and time values of most recipes. Settings are provided to prevent multiplication of user-specified recipes, and to adjust the output and time multipliers."
 }
