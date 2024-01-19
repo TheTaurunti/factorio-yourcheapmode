@@ -12,6 +12,7 @@ local excluded_recipe_subgroups = {
   ["fill-barrel"] = true,
   ["empty-barrel"] = true
 }
+local ingredient_equivalency_groups = {}
 
 
 
@@ -23,7 +24,6 @@ local function add_user_defined_exclusions(target_table, user_input)
   -- Thank you, https://stackoverflow.com/questions/1426954/split-string-in-lua
   for split_string in string.gmatch(user_input, "([^" .. "," .. "]+)") do
     target_table[split_string] = true
-    -- table.insert(target_table, split_string)
   end
 end
 
@@ -39,17 +39,46 @@ add_user_defined_exclusions(excluded_recipe_subgroups, settings.startup["YourChe
 
 for _, recipe_name in ipairs(Mod_Excluded_Recipe_Names) do
   excluded_recipe_names[recipe_name] = true
-  -- table.insert(excluded_recipe_names, recipe_name)
 end
 
 for _, recipe_category in ipairs(Mod_Excluded_Recipe_Categories) do
   excluded_recipe_categories[recipe_category] = true
-  -- table.insert(excluded_recipe_categories, recipe_name)
 end
 
 for _, recipe_subgroup in ipairs(Mod_Excluded_Recipe_Subgroups) do
   excluded_recipe_subgroups[recipe_subgroup] = true
-  -- table.insert(excluded_recipe_subgroups, recipe_name)
+end
+
+
+-- Equivalency groups take a little more work
+-- Input of {"water", "steam"} becomes:
+-- {
+--   ["water"] = { ["steam"] = true },
+--   ["steam"] = { ["water"] = true }
+-- },
+
+-- Input of {"water", "steam", "crude-oil"} becomes:
+-- {
+--   ["water"] = { ["steam"] = true, ["crude-oil"] = true },
+--   ["steam"] = { ["water"] = true, ["crude-oil"] = true },
+--   ["crude-oil"] = { ["water"] = true, ["steam"] = true }
+-- }
+for _, resource_group in ipairs(Mod_Ingredient_Equivalencies) do
+  for _, resource in ipairs(resource_group) do
+    -- Ensure table exists
+    if (not ingredient_equivalency_groups[resource])
+    then
+      ingredient_equivalency_groups[resource] = {}
+    end
+
+    -- Construct equivalencies
+    for _, other_resource in ipairs(resource_group) do
+      if (not (resource == other_resource))
+      then
+        ingredient_equivalency_groups[resource][other_resource] = true
+      end
+    end
+  end
 end
 
 
@@ -122,10 +151,6 @@ end
 
 
 
--- =====================================
--- Helper Functions For Script Execution
--- =====================================
-
 local function recipe_changes_allowed(recipe)
   if (recipe_disallowed__special(recipe.name)) then return false end
   if (EXCLUDE_PLAYER_ITEMS and recipe_disallowed__player_items(recipe.name))
@@ -141,6 +166,10 @@ local function recipe_changes_allowed(recipe)
 end
 
 
+-- =====================================
+-- Helper Functions For Script Execution
+-- =====================================
+
 local function get_adjusted_recipe_result(catalyst_amount, result_amount)
   local result_net_gain = result_amount - catalyst_amount
   if (result_net_gain <= 0)
@@ -151,90 +180,115 @@ local function get_adjusted_recipe_result(catalyst_amount, result_amount)
   return catalyst_amount + (result_net_gain * RESULT_MULTIPLIER)
 end
 
+local function get_ingredients_simplified(recipe)
+  local ret = {
+    count = 0,
+    table = {}
+  }
 
-local function apply_recipe_changes(recipe)
-  local recipe_standard = recipe.normal or recipe
+  for _, ingredient in ipairs(recipe.ingredients) do
+    local ingredient_name = ingredient.name or ingredient[1]
+    local ingredient_amount = ingredient.amount or ingredient[2]
 
-  -- Extra logic with ingredients to avoid multiplying catalyst resources
-  local ingredients_count = 0
-  local ingredients = {}
-  for _, ingredient in pairs(recipe_standard.ingredients) do
-    local ingredient_name = ingredient.name and ingredient.name or ingredient[1]
-    local ingredient_amount = ingredient.amount and ingredient.amount or ingredient[2]
-
-    ingredients[ingredient_name] = ingredient_amount
-    ingredients_count = ingredients_count + 1
+    ret.table[ingredient_name] = ingredient_amount
+    ret.count = ret.count + 1
   end
 
-  -- 0-Cost recipes can be skipped
-  if (ingredients_count == 0) then return end
-
-  -- Set Output Mult
-  local output_modified = false
-  if (recipe_standard.results)
-  then
-    for _, result in ipairs(recipe_standard.results) do
-      local result_name = result.name or result[1]
-
-      local input_catalyst_amount = ingredients[result_name] and ingredients[result_name] or 0
-      local output_catalyst_amount = result.catalyst_amount or 0
-      local greater_catalyst_amount = math.max(input_catalyst_amount, output_catalyst_amount)
-
-
-      -- here is where check and logic split for amount_min amount_max happens
-      if (result.amount_max)
-      then
-        if (result.amount_min and result.amount_min > 0)
-        then
-          result.amount_min = get_adjusted_recipe_result(greater_catalyst_amount, result.amount_min)
-        end
-
-        result.amount_max = get_adjusted_recipe_result(greater_catalyst_amount, result.amount_max)
-
-
-        if (result.amount_max > greater_catalyst_amount)
-        then
-          output_modified = true
-        end
-      else
-        local result_amount = result.amount or result[2]
-        local adjusted_result_amount = get_adjusted_recipe_result(greater_catalyst_amount, result_amount)
-
-        if (result.amount)
-        then
-          result.amount = adjusted_result_amount
-        else
-          result[2] = adjusted_result_amount
-        end
-
-        if (result_amount > greater_catalyst_amount)
-        then
-          output_modified = true
-        end
-      end
-    end
-  else
-    -- Turns out that the single-output form is actually the relic.
-    -- >> Most new things seem to use the products array (which is good)
-    local input_catalyst_amount = ingredients[recipe_standard.result] and ingredients[recipe_standard.result] or 0
-    recipe_standard.result_count = get_adjusted_recipe_result(input_catalyst_amount, recipe_standard.result_count or 1)
-    output_modified = true
-  end
-
-  -- Checking for if an output was modified covers cases where catalyst item output was not changed.
-  if (output_modified)
-  then
-    -- Set Time Mult
-    local base_recipe_time = recipe_standard.energy_required or 0.5
-    recipe_standard.energy_required = base_recipe_time * CRAFTING_TIME_MULTIPLIER
-  end
+  return ret
 end
 
 
 
--- ========================
--- Script / Logic Execution
--- ========================
+local function get_catalyst_quantity(ingredients, result_name, result_catalyst_quant)
+  -- Exact resource match is obviously best. If there isn't one, then check the
+  -- ... other ingredients for an "equivalent" that can be noted as a catalyst input
+  local input_catalyst_amount = ingredients[result_name] or 0
+
+  if (input_catalyst_amount == 0)
+  then
+    for ingred, count in pairs(ingredients) do
+      if (ingredient_equivalency_groups[ingred] and ingredient_equivalency_groups[ingred][result_name])
+      then
+        input_catalyst_amount = input_catalyst_amount + count
+      end
+    end
+  end
+
+  return math.max(input_catalyst_amount, result_catalyst_quant)
+end
+
+
+
+local function apply_recipe_changes(recipe)
+  local recipe_standard = recipe.normal or recipe
+
+  local simple_ingredients = get_ingredients_simplified(recipe_standard)
+  if (simple_ingredients.count == 0) then return end
+  local ingredients = simple_ingredients.table
+
+  -- Edge Case - Single-Output Form
+  -- Turns out that the single-output form is actually the exception.
+  -- >> Most new things seem to use the products array (which is good)
+  if (not recipe_standard.results)
+  then
+    local catalyst_amount = get_catalyst_quantity(ingredients, recipe_standard.result, 0)
+    recipe_standard.result_count = get_adjusted_recipe_result(catalyst_amount, recipe_standard.result_count or 1)
+
+    if (recipe_standard.result_count > catalyst_amount)
+    then
+      recipe_standard.energy_required = (recipe_standard.energy_required or 0.5) * CRAFTING_TIME_MULTIPLIER
+    end
+
+    return
+  end
+
+  -- Normal Case - Array-Output Form
+  local one_or_more_results_multiplied = false
+  for _, result in ipairs(recipe_standard.results) do
+    local catalyst_quant = get_catalyst_quantity(
+      ingredients,
+      (result.name or result[1]),
+      result.catalyst_amount or 0
+    )
+
+    if (result.amount_max)
+    then
+      if (result.amount_min and result.amount_min > 0)
+      then
+        result.amount_min = get_adjusted_recipe_result(catalyst_quant, result.amount_min)
+      end
+
+      result.amount_max = get_adjusted_recipe_result(catalyst_quant, result.amount_max)
+
+      if (result.amount_max > catalyst_quant)
+      then
+        one_or_more_results_multiplied = true
+      end
+    else
+      local result_amount = result.amount or result[2]
+
+      if (result.amount)
+      then
+        result.amount = get_adjusted_recipe_result(catalyst_quant, result_amount)
+      else
+        result[2] = get_adjusted_recipe_result(catalyst_quant, result_amount)
+      end
+
+      if (result_amount > catalyst_quant)
+      then
+        one_or_more_results_multiplied = true
+      end
+    end
+  end
+
+  if (one_or_more_results_multiplied) then
+    recipe_standard.energy_required = (recipe_standard.energy_required or 0.5) * CRAFTING_TIME_MULTIPLIER
+  end
+end
+
+-- ================
+-- Script Execution
+-- ================
 
 local recipes = data.raw["recipe"]
 

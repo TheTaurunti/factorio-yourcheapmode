@@ -1,11 +1,17 @@
 {
   "name": "YourCheapMode",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "title": "Your Cheap Mode",
   "author": "Taurunti",
   "contact": "thetaurunti@gmail.com",
   "homepage": "https://github.com/TheTaurunti/factorio-cheapmode",
   "factorio_version": "1.1",
-  "dependencies": ["base >= 1.1", "? IntermodalContainers", "? FreightForwarding", "? Krastorio2"],
-  "description": "Reduces recipe costs across the board by multiplying outputs and time costs. Settings are provided to exclude recipes of the player's choice or use a different multiplier."
+  "dependencies": [
+    "base >= 1.1",
+    "? FreightForwarding",
+    "? IntermodalContainers",
+    "? Krastorio2",
+    "? space-exploration"
+  ],
+  "description": "Reduces recipe costs across the board by multiplying outputs and time costs. Settings are provided to exclude recipes of the players choice, or use a different multiplier."
 }

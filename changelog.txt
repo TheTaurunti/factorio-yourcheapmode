@@ -1,8 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.7
+Date: 2024-01-15
+  Features:
+    - Implemented cool system for avoiding simple infinite resource loops (resource equivalency)
+    - Space Exploration Compatibility - Everything except data cards
+  Fixes:
+    - Dependencies are back because they were not actually preventing updates
+---------------------------------------------------------------------------------------------------
 Version: 1.0.6
 Date: 2024-01-03
   Features:
-    - Fixed malformed dependency strings
+    - Removed dependencies because I have no idea why they were preventing updates
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.5
 Date: 2023-12-07

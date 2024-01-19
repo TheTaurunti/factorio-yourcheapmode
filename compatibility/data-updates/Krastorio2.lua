@@ -4,6 +4,6 @@ if mods["Krastorio2"] then
   then
     local input_heavy_oil_amount = coal_filtration_recipe.ingredients[1].amount
     coal_filtration_recipe.ingredients[1].amount = input_heavy_oil_amount *
-    settings.startup["YourCheapMode-recipe-result-multiplier"].value
+        settings.startup["YourCheapMode-recipe-result-multiplier"].value
   end
 end
