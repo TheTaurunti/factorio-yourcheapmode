@@ -28,6 +28,9 @@ if mods["space-exploration"] then
   table.insert(Mod_Excluded_Recipe_Names, "se-scrap-decontamination")
   table.insert(Mod_Excluded_Recipe_Names, "se-used-lifesupport-canister-cleaning-space")
 
+  -- This is just to reduce the sheer quantity of resources output by core processing.
+  -- >> You already need so few, no need for more.
+  table.insert(Mod_Excluded_Recipe_Categories, "core-fragment-processing")
 
 
   -- Steam <-> Water Conversion Recipes
@@ -36,6 +39,7 @@ if mods["space-exploration"] then
   --table.insert(Mod_Excluded_Recipe_Names, "se-steam-to-water")
   --table.insert(Mod_Excluded_Recipe_Categories, "condenser-turbine")
   --table.insert(Mod_Excluded_Recipe_Categories, "se-electric-boiling")
+
 
   -- Thermofluid
   table.insert(Mod_Ingredient_Equivalencies, {
