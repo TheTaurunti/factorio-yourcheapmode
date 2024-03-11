@@ -1,55 +1,36 @@
--- =======================
--- Variable Initialization
--- =======================
+-- =============
+-- Load Settings
+-- =============
 
 local RESULT_MULTIPLIER = settings.startup["YourCheapMode-recipe-result-multiplier"].value
 local CRAFTING_TIME_MULTIPLIER = settings.startup["YourCheapMode-recipe-time-multiplier"].value
 local EXCLUDE_PLAYER_ITEMS = settings.startup["YourCheapMode-player-items-exclusion"].value
-
-local excluded_recipe_names = {}
-local excluded_recipe_categories = {}
-local excluded_recipe_subgroups = {
-  ["fill-barrel"] = true,
-  ["empty-barrel"] = true
-}
-local ingredient_equivalency_groups = {}
-
-
-
--- ==================================
--- Add User-Defined Recipe Exclusions
--- ==================================
-
-local function add_user_defined_exclusions(target_table, user_input)
-  -- Thank you, https://stackoverflow.com/questions/1426954/split-string-in-lua
-  for split_string in string.gmatch(user_input, "([^" .. "," .. "]+)") do
-    target_table[split_string] = true
-  end
-end
-
-add_user_defined_exclusions(excluded_recipe_names, settings.startup["YourCheapMode-user-excluded-names"].value)
-add_user_defined_exclusions(excluded_recipe_categories, settings.startup["YourCheapMode-user-excluded-categories"].value)
-add_user_defined_exclusions(excluded_recipe_subgroups, settings.startup["YourCheapMode-user-excluded-subgroups"].value)
-
 
 
 -- ==================================
 -- Add Mod-Defined Recipe Exclusions
 -- ==================================
 
+local excluded_recipe_names = {}
 for _, recipe_name in ipairs(Mod_Excluded_Recipe_Names) do
   excluded_recipe_names[recipe_name] = true
 end
 
+local excluded_recipe_categories = {}
 for _, recipe_category in ipairs(Mod_Excluded_Recipe_Categories) do
   excluded_recipe_categories[recipe_category] = true
 end
 
+local excluded_recipe_subgroups = {
+  ["fill-barrel"] = true,
+  ["empty-barrel"] = true
+}
 for _, recipe_subgroup in ipairs(Mod_Excluded_Recipe_Subgroups) do
   excluded_recipe_subgroups[recipe_subgroup] = true
 end
 
 
+local ingredient_equivalency_groups = {}
 -- Equivalency groups take a little more work
 -- Input of {"water", "steam"} becomes:
 -- {
@@ -122,11 +103,8 @@ local function recipe_disallowed__player_items(recipe_name)
   return false
 end
 
-
 if (EXCLUDE_PLAYER_ITEMS)
 then
-  -- If items similar to these are added by another mod...
-  -- ... they should be excluded as well for consistency.
   excluded_recipe_names["artillery-targeting-remote"] = true
   excluded_recipe_names["discharge-defense-remote"] = true
 end

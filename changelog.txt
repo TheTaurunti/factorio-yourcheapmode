@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.8
+Date: 2024-03-10
+  Features:
+    - Removed mod settings for player-set exclusions. Was unnecessary clutter in the settings menu. If anybody actually WAS using this, please share your notes with the class!
+  Compatibility:
+    - Finished(?) compat for Space Exploration. Full playthrough should be possible without nasty resource loops. The only uncertainty is with Biosludge.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.7
 Date: 2024-01-15
   Features:
