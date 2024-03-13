@@ -1,10 +1,10 @@
 {
   "name": "YourCheapMode",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "title": "Your Cheap Mode",
   "author": "Taurunti",
   "contact": "thetaurunti@gmail.com",
-  "homepage": "https://github.com/TheTaurunti/factorio-cheapmode",
+  "homepage": "https://github.com/TheTaurunti/factorio-yourcheapmode",
   "factorio_version": "1.1",
   "dependencies": [
     "base >= 1.1",

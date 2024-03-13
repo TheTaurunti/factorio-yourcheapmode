@@ -16,6 +16,13 @@ for _, recipe_name in ipairs(Mod_Excluded_Recipe_Names) do
   excluded_recipe_names[recipe_name] = true
 end
 
+-- Thank you, https://stackoverflow.com/questions/1426954/split-string-in-lua
+local user_defined_excluded_recipes = settings.startup["YourCheapMode-user-excluded-names"].value
+for split_string in string.gmatch(user_defined_excluded_recipes, "([^" .. "," .. "]+)") do
+  excluded_recipe_names[split_string] = true
+end
+
+
 local excluded_recipe_categories = {}
 for _, recipe_category in ipairs(Mod_Excluded_Recipe_Categories) do
   excluded_recipe_categories[recipe_category] = true
