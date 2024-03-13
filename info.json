@@ -1,6 +1,6 @@
 {
   "name": "YourCheapMode",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "title": "Your Cheap Mode",
   "author": "Taurunti",
   "contact": "thetaurunti@gmail.com",
@@ -10,9 +10,10 @@
     "base >= 1.1",
     "(?) FreeBuildings",
     "? FreightForwarding",
-    "? IntermodalContainers",
+    "(?) IntermodalContainers",
     "? Krastorio2",
-    "? space-exploration"
+    "? space-exploration",
+    "(?) Mining_Drones"
   ],
   "description": "Reduces recipe costs across the board by multiplying outputs and time costs. Settings are provided to exclude recipes of the players choice, or use a different multiplier."
 }
