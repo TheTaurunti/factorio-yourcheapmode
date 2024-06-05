@@ -1,43 +1,15 @@
--- =============
--- Load Settings
--- =============
-
-local RESULT_MULTIPLIER = settings.startup["YourCheapMode-recipe-result-multiplier"].value
-local CRAFTING_TIME_MULTIPLIER = settings.startup["YourCheapMode-recipe-time-multiplier"].value
-local EXCLUDE_PLAYER_ITEMS = settings.startup["YourCheapMode-player-items-exclusion"].value
-
-
 -- ==================================
--- Add Mod-Defined Recipe Exclusions
+-- Add User-Defined Recipe Exclusions
 -- ==================================
-
-local excluded_recipe_names = {}
-for _, recipe_name in ipairs(Mod_Excluded_Recipe_Names) do
-  excluded_recipe_names[recipe_name] = true
-end
 
 -- Thank you, https://stackoverflow.com/questions/1426954/split-string-in-lua
 local user_defined_excluded_recipes = settings.startup["YourCheapMode-user-excluded-names"].value
 for split_string in string.gmatch(user_defined_excluded_recipes, "([^" .. "," .. "]+)") do
-  excluded_recipe_names[split_string] = true
+  Excluded_Recipe_Names[split_string] = true
 end
 
 
-local excluded_recipe_categories = {}
-for _, recipe_category in ipairs(Mod_Excluded_Recipe_Categories) do
-  excluded_recipe_categories[recipe_category] = true
-end
-
-local excluded_recipe_subgroups = {
-  ["fill-barrel"] = true,
-  ["empty-barrel"] = true
-}
-for _, recipe_subgroup in ipairs(Mod_Excluded_Recipe_Subgroups) do
-  excluded_recipe_subgroups[recipe_subgroup] = true
-end
-
-
-local ingredient_equivalency_groups = {}
+local ingredient_equivalency_matricies = {}
 -- Equivalency groups take a little more work
 -- Input of {"water", "steam"} becomes:
 -- {
@@ -51,39 +23,30 @@ local ingredient_equivalency_groups = {}
 --   ["steam"] = { ["water"] = true, ["crude-oil"] = true },
 --   ["crude-oil"] = { ["water"] = true, ["steam"] = true }
 -- }
-for _, resource_group in ipairs(Mod_Ingredient_Equivalencies) do
+for _, resource_group in ipairs(Ingredient_Equivalency_Groups) do
   for _, resource in ipairs(resource_group) do
     -- Ensure table exists
-    if (not ingredient_equivalency_groups[resource])
+    if (not ingredient_equivalency_matricies[resource])
     then
-      ingredient_equivalency_groups[resource] = {}
+      ingredient_equivalency_matricies[resource] = {}
     end
 
     -- Construct equivalencies
     for _, other_resource in ipairs(resource_group) do
       if (not (resource == other_resource))
       then
-        ingredient_equivalency_groups[resource][other_resource] = true
+        ingredient_equivalency_matricies[resource][other_resource] = true
       end
     end
   end
 end
 
 
+-- ======================================
+-- Excluding Player Items & Un-Stackables
+-- ======================================
 
--- =========================
--- Recipe Exclusion: Vanilla
--- =========================
-
--- Potentially-Gainful Recipe Loops (Nuclear Power)
-excluded_recipe_names["uranium-fuel-cell"] = true
-excluded_recipe_names["nuclear-fuel-reprocessing"] = true
-
--- Multiplying rocket parts in the silo does nothing. This prevents visual error.
--- >> If there is a mod that produces rocket parts OUTSIDE of silo, this would be fine to have not-excluded
-excluded_recipe_names["rocket-part"] = true
-
--- Player Items Exclusion Setting Check
+-- Player Items
 local guns = data.raw["gun"]
 local solar_equipments = data.raw["solar-panel-equipment"]
 local generator_equipments = data.raw["generator-equipment"]
@@ -110,21 +73,15 @@ local function recipe_disallowed__player_items(recipe_name)
   return false
 end
 
-if (EXCLUDE_PLAYER_ITEMS)
-then
-  excluded_recipe_names["artillery-targeting-remote"] = true
-  excluded_recipe_names["discharge-defense-remote"] = true
-end
 
-
--- Excluding troublesome non-stacking items/recipes
+-- Un-Stackables
 local armors = data.raw["armor"]
 local cars = data.raw["car"]
 local spider_vehicles = data.raw["spider-vehicle"]
 local spidertron_remotes = data.raw["spidertron-remote"]
 local rocket_silos = data.raw["rocket-silo"]
 
-local function recipe_disallowed__special(recipe_name)
+local function recipe_disallowed_for_stacking_issues(recipe_name)
   if (armors[recipe_name]) then return true end
   if (cars[recipe_name]) then return true end
   if (spider_vehicles[recipe_name]) then return true end
@@ -135,26 +92,26 @@ local function recipe_disallowed__special(recipe_name)
 end
 
 
+local function can_recipe_be_changed(recipe)
+  if (Excluded_Recipe_Names[recipe.name]) then return false end
+  if (Excluded_Recipe_Categories[recipe.category]) then return false end
+  if (Excluded_Recipe_Subgroups[recipe.subgroup]) then return false end
 
-local function recipe_changes_allowed(recipe)
-  if (recipe_disallowed__special(recipe.name)) then return false end
-  if (EXCLUDE_PLAYER_ITEMS and recipe_disallowed__player_items(recipe.name))
-  then
-    return false
-  end
-
-  if (excluded_recipe_names[recipe.name]) then return false end
-  if (excluded_recipe_categories[recipe.category]) then return false end
-  if (excluded_recipe_subgroups[recipe.subgroup]) then return false end
+  if (recipe_disallowed_for_stacking_issues(recipe.name)) then return false end
+  if (recipe_disallowed__player_items(recipe.name)) then return false end
 
   return true
 end
 
+-- ==========================================================
+-- Recipe Adjustment Functions (Lots of important stuff here)
+-- ==========================================================
 
--- =====================================
--- Helper Functions For Script Execution
--- =====================================
+-- Load Settings
+local RESULT_MULTIPLIER = settings.startup["YourCheapMode-recipe-result-multiplier"].value
+local CRAFTING_TIME_MULTIPLIER = settings.startup["YourCheapMode-recipe-time-multiplier"].value
 
+-- Functions
 local function get_adjusted_recipe_result(catalyst_amount, result_amount)
   local result_net_gain = result_amount - catalyst_amount
   if (result_net_gain <= 0)
@@ -183,7 +140,6 @@ local function get_ingredients_simplified(recipe)
 end
 
 
-
 local function get_catalyst_quantity(ingredients, result_name, result_catalyst_quant)
   -- Exact resource match is obviously best. If there isn't one, then check the
   -- ... other ingredients for an "equivalent" that can be noted as a catalyst input
@@ -192,7 +148,7 @@ local function get_catalyst_quantity(ingredients, result_name, result_catalyst_q
   if (input_catalyst_amount == 0)
   then
     for ingred, count in pairs(ingredients) do
-      if (ingredient_equivalency_groups[ingred] and ingredient_equivalency_groups[ingred][result_name])
+      if (ingredient_equivalency_matricies[ingred] and ingredient_equivalency_matricies[ingred][result_name])
       then
         input_catalyst_amount = input_catalyst_amount + count
       end
@@ -203,6 +159,20 @@ local function get_catalyst_quantity(ingredients, result_name, result_catalyst_q
 end
 
 
+local function get_recipe_result(recipe)
+  local recipe_standard = recipe.normal or recipe
+  local results = recipe_standard.results
+
+  if (not results) then return recipe_standard.result end
+  if (#results > 1) then return nil end
+
+  if (results[1])
+  then
+    return results[1].name or results[1][1]
+  end
+
+  return nil
+end
 
 local function apply_recipe_changes(recipe)
   local recipe_standard = recipe.normal or recipe
@@ -271,6 +241,27 @@ local function apply_recipe_changes(recipe)
   end
 end
 
+-- ===========================
+-- Recipe Exclusion: Buildings
+-- ===========================
+
+local placeable_item_check_groups = {
+  "item",
+  "item-with-entity-data"
+}
+
+-- Find building item-names
+local item_buildings_to_skip = {}
+for _, group in ipairs(placeable_item_check_groups) do
+  for _, thing in pairs(data.raw[group]) do
+    if (thing.place_result)
+    then
+      item_buildings_to_skip[thing.name] = true
+    end
+  end
+end
+
+
 -- ================
 -- Script Execution
 -- ================
@@ -278,7 +269,15 @@ end
 local recipes = data.raw["recipe"]
 
 for _, recipe in pairs(recipes) do
-  if (recipe_changes_allowed(recipe))
+  -- Check so we can skip buildings
+  local result = get_recipe_result(recipe)
+  if (result and item_buildings_to_skip[result])
+  then
+    Excluded_Recipe_Names[recipe.name] = true
+  end
+
+  --
+  if (can_recipe_be_changed(recipe))
   then
     apply_recipe_changes(recipe)
   end

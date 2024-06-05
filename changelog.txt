@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 2024-06-05
+  Changes:
+    - Buildings are no longer multiplied (mk1->mk2 style upgrades left a lot of lower tier items behind)
+    - Removed setting for excluding player equipment items (they do not get multiplied)
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2024-03-13
   Changes:

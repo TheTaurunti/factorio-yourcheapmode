@@ -18,18 +18,11 @@ data:extend({
   },
 
   {
-    type = "bool-setting",
-    name = "YourCheapMode-player-items-exclusion",
-    setting_type = "startup",
-    default_value = true
-  },
-
-  {
     type = "string-setting",
     name = "YourCheapMode-user-excluded-names",
     setting_type = "startup",
     default_value = "",
     allow_blank = true,
     auto_trim = true
-  },
+  }
 })

@@ -1,19 +1,45 @@
 if mods["space-exploration"] then
   -- "Packing" and recipes like ingots, which are used to more densely transfer items in cargo ships
-  table.insert(Mod_Excluded_Recipe_Categories, "delivery-cannon")
-  table.insert(Mod_Excluded_Recipe_Names, "se-cargo-rocket-section-pack")
-  table.insert(Mod_Excluded_Recipe_Names, "se-cargo-rocket-section-unpack")
+  Excluded_Recipe_Names["se-cargo-rocket-section-pack"] = true
+  Excluded_Recipe_Names["se-cargo-rocket-section-unpack"] = true
 
-  table.insert(Mod_Excluded_Recipe_Names, "se-plasma-canister")
-  table.insert(Mod_Excluded_Recipe_Names, "se-plasma-canister-empty")
+  Excluded_Recipe_Names["se-plasma-canister"] = true
+  Excluded_Recipe_Names["se-plasma-canister-empty"] = true
+  Excluded_Recipe_Names["se-ion-canister"] = true
+  Excluded_Recipe_Names["se-ion-canister-empty"] = true
+  Excluded_Recipe_Names["se-antimatter-canister"] = true
+  Excluded_Recipe_Names["se-empty-antimatter-canister"] = true -- why not named consistently?
 
-  table.insert(Mod_Excluded_Recipe_Names, "se-ion-canister")
-  table.insert(Mod_Excluded_Recipe_Names, "se-ion-canister-empty")
+  -- Ice <-> Fluid Conversion Recipes
+  Excluded_Recipe_Names["se-cryonite-to-water-ice"] = true
+  Excluded_Recipe_Names["se-melting-water-ice"] = true
+  Excluded_Recipe_Names["se-cryonite-to-methane-ice"] = true
+  Excluded_Recipe_Names["se-melting-methane-ice"] = true
 
-  table.insert(Mod_Excluded_Recipe_Names, "se-antimatter-canister")
-  table.insert(Mod_Excluded_Recipe_Names, "se-empty-antimatter-canister") -- why not named consistently?
+  -- Special case exclusions (win-con doesn't need a time extension)
+  Excluded_Recipe_Names["se-distortion-drive"] = true
 
-  table.insert(Mod_Ingredient_Equivalencies, {
+  -- Refurbishment / "Fixing an item" recipes
+  Excluded_Recipe_Names["se-space-capsule-refurbish"] = true
+
+  -- Recycling Facility
+  Excluded_Recipe_Categories["hand-hard-recycling"] = true
+  Excluded_Recipe_Categories["hard-recycling"] = true
+
+  -- Other troublesome areas
+  Excluded_Recipe_Categories["delivery-cannon"] = true
+  Excluded_Recipe_Categories["core-fragment-processing"] = true
+
+  -- Thermofluid
+  table.insert(Ingredient_Equivalency_Groups, {
+    "se-space-coolant-hot",
+    "se-space-coolant-warm",
+    "se-space-coolant-cold",
+    "se-space-coolant-supercooled"
+  })
+
+  -- Similar to barreling, but for the particle streams
+  table.insert(Ingredient_Equivalency_Groups, {
     "se-magnetic-canister",
 
     "se-plasma-canister",
@@ -21,62 +47,26 @@ if mods["space-exploration"] then
     "se-antimatter-canister",
   })
 
-
-  -- Ice <-> Fluid Conversion Recipes
-  table.insert(Mod_Excluded_Recipe_Names, "se-cryonite-to-water-ice")
-  table.insert(Mod_Excluded_Recipe_Names, "se-melting-water-ice")
-  table.insert(Mod_Excluded_Recipe_Names, "se-cryonite-to-methane-ice")
-  table.insert(Mod_Excluded_Recipe_Names, "se-melting-methane-ice")
-
-  -- Special case exclusions (win-con doesn't need a time extension)
-  table.insert(Mod_Excluded_Recipe_Names, "se-distortion-drive")
-
-
   -- Life Support (avoid duplicating containers)
-  table.insert(Mod_Ingredient_Equivalencies, {
+  table.insert(Ingredient_Equivalency_Groups, {
     "se-lifesupport-canister",
     "se-used-lifesupport-canister",
     "se-empty-lifesupport-canister"
   })
 
-
-  -- Refurbishment / "Fixing an item" recipes
-  table.insert(Mod_Excluded_Recipe_Names, "se-space-capsule-refurbish")
-
-  -- Recycling Facility
-  table.insert(Mod_Excluded_Recipe_Categories, "hand-hard-recycling")
-  table.insert(Mod_Excluded_Recipe_Categories, "hard-recycling")
-
   -- Decontamination
-  table.insert(Mod_Ingredient_Equivalencies, {
+  table.insert(Ingredient_Equivalency_Groups, {
     "se-scrap",
     "se-contaminated-scrap"
   })
-  table.insert(Mod_Ingredient_Equivalencies, {
+  table.insert(Ingredient_Equivalency_Groups, {
     "se-space-water",
     "se-contaminated-space-water"
   })
-  table.insert(Mod_Ingredient_Equivalencies, {
+  table.insert(Ingredient_Equivalency_Groups, {
     "se-bio-sludge",
     "se-contaminated-bio-sludge"
   })
-
-
-
-  -- This is just to reduce the sheer quantity of resources output by core processing.
-  -- >> You already need so few, no need for more.
-  table.insert(Mod_Excluded_Recipe_Categories, "core-fragment-processing")
-
-
-
-  -- Thermofluid
-  table.insert(Mod_Ingredient_Equivalencies, {
-    "se-space-coolant-hot",
-    "se-space-coolant-warm",
-    "se-space-coolant-cold",
-    "se-space-coolant-supercooled"
-  })
-
 
 
   -- ==================================
@@ -97,10 +87,10 @@ if mods["space-exploration"] then
   local formatting_3 = recipes["se-formatting-3"]
   local formatting_4 = recipes["se-formatting-4"]
 
-  table.insert(Mod_Excluded_Recipe_Names, "se-formatting-1")
-  table.insert(Mod_Excluded_Recipe_Names, "se-formatting-2")
-  table.insert(Mod_Excluded_Recipe_Names, "se-formatting-3")
-  table.insert(Mod_Excluded_Recipe_Names, "se-formatting-4")
+  Excluded_Recipe_Names["se-formatting-1"] = true
+  Excluded_Recipe_Names["se-formatting-2"] = true
+  Excluded_Recipe_Names["se-formatting-3"] = true
+  Excluded_Recipe_Names["se-formatting-4"] = true
 
   formatting_1.energy_required = 60
   formatting_1.results = {

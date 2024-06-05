@@ -1,20 +1,21 @@
 -- Globals for Compatibility
-Mod_Excluded_Recipe_Names = {}
-Mod_Excluded_Recipe_Categories = {}
-Mod_Excluded_Recipe_Subgroups = {}
-Mod_Ingredient_Equivalencies = {}
+Excluded_Recipe_Names = {}
+Excluded_Recipe_Categories = {}
+Excluded_Recipe_Subgroups = {}
 
-table.insert(Mod_Ingredient_Equivalencies, { "water", "steam" })
+Ingredient_Equivalency_Groups = {}
 
--- Util functions for editing recipes
-require("prototypes.recipe.Utils")
+require("utils")
+
+-- Vanilla
+require("compatibility.base")
 
 -- Compatibility
-require("compatibility.data-final-fixes.FreightForwarding")
-require("compatibility.data-final-fixes.IntermodalContainers")
-require("compatibility.data-final-fixes.Krastorio2")
-require("compatibility.data-final-fixes.Mining_Drones")
-require("compatibility.data-final-fixes.SpaceExploration")
+require("compatibility.FreightForwarding")
+require("compatibility.IntermodalContainers")
+require("compatibility.Krastorio2")
+require("compatibility.Mining_Drones")
+require("compatibility.SpaceExploration")
 
--- Mod Logic
+-- Main
 require("prototypes.recipe.recipe")
