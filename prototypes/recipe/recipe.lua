@@ -177,6 +177,19 @@ local function apply_recipe_changes(recipe)
 	if (simple_ingredients.count == 0) then return end
 	local ingredients = simple_ingredients.table
 
+	-- Always check: Does this recipe need input multiplied for balance?
+	if (Input_Mult_Recipes[recipe.name])
+	then
+		for _, ingred in ipairs(recipe.ingredients) do
+			if (ingred.amount)
+			then
+				ingred.amount = ingred.amount * RESULT_MULTIPLIER
+			else
+				ingred[2] = ingred[2] * RESULT_MULTIPLIER
+			end
+		end
+	end
+
 	-- Edge Case - Single-Output Form
 	-- Turns out that the single-output form is actually the exception.
 	-- >> Most new things seem to use the products array (which is good)

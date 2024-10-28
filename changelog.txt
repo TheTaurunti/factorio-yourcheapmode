@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.4
+Date: 2024-10-19
+  Compatibility:
+    - LunarLandings
+    - kj_fuel
+    - electric-trains
+   Features:
+    - Added table for multiplying input ingredients where needed
+---------------------------------------------------------------------------------------------------
 Version: 1.1.3
 Date: 2024-09-07
   Compatibility:

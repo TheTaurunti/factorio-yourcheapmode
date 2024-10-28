@@ -14,7 +14,8 @@
     "? Krastorio2",
     "? space-exploration",
     "(?) Mining_Drones",
-    "? IndustrialRevolution3"
+    "? IndustrialRevolution3",
+    "? LunarLandings"
   ],
   "description": "Reduces recipe costs across the board by multiplying outputs and time costs. Settings are provided to exclude recipes of the players choice, or use a different multiplier."
 }
