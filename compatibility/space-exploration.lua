@@ -31,7 +31,7 @@ if mods["space-exploration"] then
   Excluded_Recipe_Categories["core-fragment-processing"] = true
 
   -- Thermofluid
-  table.insert(Ingredient_Equivalency_Groups, {
+  Make_Equivalency_Group({
     "se-space-coolant-hot",
     "se-space-coolant-warm",
     "se-space-coolant-cold",
@@ -39,31 +39,31 @@ if mods["space-exploration"] then
   })
 
   -- Similar to barreling, but for the particle streams
-  table.insert(Ingredient_Equivalency_Groups, {
+  Make_Equivalency_Group({
     "se-magnetic-canister",
 
     "se-plasma-canister",
     "se-ion-canister",
-    "se-antimatter-canister",
+    "se-antimatter-canister"
   })
 
   -- Life Support (avoid duplicating containers)
-  table.insert(Ingredient_Equivalency_Groups, {
+  Make_Equivalency_Group({
     "se-lifesupport-canister",
     "se-used-lifesupport-canister",
     "se-empty-lifesupport-canister"
   })
 
   -- Decontamination
-  table.insert(Ingredient_Equivalency_Groups, {
+  Make_Equivalency_Group({
     "se-scrap",
     "se-contaminated-scrap"
   })
-  table.insert(Ingredient_Equivalency_Groups, {
+  Make_Equivalency_Group({
     "se-space-water",
     "se-contaminated-space-water"
   })
-  table.insert(Ingredient_Equivalency_Groups, {
+  Make_Equivalency_Group({
     "se-bio-sludge",
     "se-contaminated-bio-sludge"
   })
@@ -162,6 +162,6 @@ if mods["space-exploration"] then
 
     local removed = Remove_Recipe_Result(recipe, "se-empty-data")
     removed.name = "se-junk-data"
-    Add_Recipe_Result(recipe, removed)
+    table.insert(recipe.results, removed)
   end
 end

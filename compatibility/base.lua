@@ -13,5 +13,9 @@ Excluded_Recipe_Names["rocket-part"] = true
 Excluded_Recipe_Subgroups["fill-barrel"] = true
 Excluded_Recipe_Subgroups["empty-barrel"] = true
 
+-- Retexturing concrete should not multiply it.
+Excluded_Recipe_Names["hazard-concrete"] = true
+Excluded_Recipe_Names["refined-hazard-concrete"] = true
+
 -- Lots of mods like to convert between these two
-table.insert(Ingredient_Equivalency_Groups, { "water", "steam" })
+Make_Equivalency_Group({ "water" }, { { "steam", 10 } })

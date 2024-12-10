@@ -1,11 +1,10 @@
 if mods["Krastorio2"] then
   -- Coal filtration is a problem recipe for this mod - needs direct changes
+  Excluded_Recipe_Names["coal-filtration"] = true
   local coal_filtration_recipe = data.raw["recipe"]["coal-filtration"]
   if (coal_filtration_recipe)
   then
-    local input_heavy_oil_amount = coal_filtration_recipe.ingredients[1].amount
-    coal_filtration_recipe.ingredients[1].amount = input_heavy_oil_amount *
-        settings.startup["YourCheapMode-recipe-result-multiplier"].value
+    Input_Mult_Recipes[coal_filtration_recipe.name] = true
   end
 
   -- Exclusion as normal
@@ -16,8 +15,6 @@ if mods["Krastorio2"] then
 
   Excluded_Recipe_Names["kr-water"] = true
   Excluded_Recipe_Names["kr-water-separation"] = true
-
-  Excluded_Recipe_Names["coal-filtration"] = true
 
   Excluded_Recipe_Names["dirty-water-filtration-1"] = true
   Excluded_Recipe_Names["dirty-water-filtration-2"] = true
