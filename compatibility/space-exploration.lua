@@ -16,7 +16,7 @@ if mods["space-exploration"] then
   Excluded_Recipe_Names["se-cryonite-to-methane-ice"] = true
   Excluded_Recipe_Names["se-melting-methane-ice"] = true
 
-  -- Special case exclusions (win-con doesn't need a time extension)
+  -- Special case exclusions (se win-con is implemented as a recipe)
   Excluded_Recipe_Names["se-distortion-drive"] = true
 
   -- Refurbishment / "Fixing an item" recipes
@@ -94,30 +94,30 @@ if mods["space-exploration"] then
 
   formatting_1.energy_required = 60
   formatting_1.results = {
-    { type = "item",  name = "se-broken-data",       amount = 1, probability = 0.1 },
-    { type = "item",  name = "se-scrap",             amount = 1, probability = 0.9 },
+    { type = "item",  name = "se-broken-data",       amount = 1, independent_probability = 0.1 },
+    { type = "item",  name = "se-scrap",             amount = 1, independent_probability = 0.9 },
     { type = "fluid", name = "se-space-coolant-hot", amount = 1 },
   }
 
   formatting_2.energy_required = 30
   formatting_2.results = {
-    { type = "item",  name = "se-broken-data",       amount = 1, probability = 0.2 },
-    { type = "item",  name = "se-scrap",             amount = 1, probability = 0.8 },
+    { type = "item",  name = "se-broken-data",       amount = 1, independent_probability = 0.2 },
+    { type = "item",  name = "se-scrap",             amount = 1, independent_probability = 0.8 },
     { type = "fluid", name = "se-space-coolant-hot", amount = 1 },
   }
 
   formatting_3.energy_required = 15
   formatting_3.results = {
-    { type = "item",  name = "se-broken-data",       amount = 1, probability = 0.4 },
-    { type = "item",  name = "se-scrap",             amount = 1, probability = 0.6 },
+    { type = "item",  name = "se-broken-data",       amount = 1, independent_probability = 0.4 },
+    { type = "item",  name = "se-scrap",             amount = 1, independent_probability = 0.6 },
     { type = "fluid", name = "se-space-coolant-hot", amount = 1 },
   }
 
   formatting_4.energy_required = 5
   formatting_4.results = {
-    { type = "item",  name = "se-broken-data",       amount = 1, probability = 0.8 },
-    { type = "item",  name = "se-scrap",             amount = 1, probability = 0.2 },
-    { type = "item",  name = "se-cryonite-rod",      amount = 1, probability = 0.9 },
+    { type = "item",  name = "se-broken-data",       amount = 1, independent_probability = 0.8 },
+    { type = "item",  name = "se-scrap",             amount = 1, independent_probability = 0.2 },
+    { type = "item",  name = "se-cryonite-rod",      amount = 1, independent_probability = 0.9 },
     { type = "fluid", name = "se-space-coolant-hot", amount = 1 },
   }
 

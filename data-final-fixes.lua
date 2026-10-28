@@ -286,7 +286,7 @@ for _, recipe in pairs(recipes) do
 
     for _, result in ipairs(recipe.results) do
       if (not restrictions or (restrictions and restrictions[result.name])) then
-        result.probability = (result.probability or 1.0) / RESULT_MULTIPLIER
+        result.independent_probability = (result.independent_probability or 1.0) / RESULT_MULTIPLIER
       end
     end
   end
