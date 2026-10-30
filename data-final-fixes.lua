@@ -145,7 +145,7 @@ end
 
 local function can_recipe_be_changed(recipe)
   if (Excluded_Recipe_Names[recipe.name]) then return false end
-  if (Excluded_Recipe_Categories[recipe.category]) then return false end
+  if (recipe.categories and Excluded_Recipe_Categories[recipe.categories[1]]) then return false end
   if (Excluded_Recipe_Subgroups[recipe.subgroup]) then return false end
 
   if (recipe_disallowed_for_stacking_issues(recipe.name)) then return false end

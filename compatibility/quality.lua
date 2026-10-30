@@ -5,7 +5,7 @@ if mods["quality"] then
   local recipes = data.raw["recipe"]
   for recipe_name, recipe in pairs(recipes) do
     local recipe_result_item_name = Get_Recipe_Result_Name(recipe)
-    if (recipe.category == "recycling" and not Item_Buildings_To_Skip[recipe_result_item_name])
+    if ((recipe.categories and recipe.categories[1] == "recycling") and not Item_Buildings_To_Skip[recipe_result_item_name])
     then
       Output_Prob_Division_Recipes[recipe_name] = true
     end

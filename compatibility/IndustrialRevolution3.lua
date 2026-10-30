@@ -26,7 +26,7 @@ if mods["IndustrialRevolution3"] then
   -- ... what the appropriate costs or chances would be.
   local recipes = data.raw["recipe"]
   for _, recipe in pairs(recipes) do
-    if (recipe.category == "scrapping")
+    if (recipe.categories[1] == "scrapping")
     then
       recipe.results = {}
     end
